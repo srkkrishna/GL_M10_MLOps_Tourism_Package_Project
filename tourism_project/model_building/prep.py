@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 
 # Load dataset from the project data folder
 df = pd.read_csv("tourism_project/data/tourism.csv")
+print("Columns in dataset:", df.columns.tolist())
 
 # ✅ Remove unnecessary columns (adjust as needed)
 # Example: drop an ID column if present
@@ -10,8 +11,8 @@ if "CustomerID" in df.columns:
     df.drop(columns=["CustomerID"], inplace=True)
 
 # Define features (X) and target (y)
-X = df.drop(columns=["PackagePurchased"])
-y = df["PackagePurchased"]
+X = df.drop(columns=["ProdTaken"])
+y = df["ProdTaken"]
 
 # Stratified split to preserve class balance
 Xtrain, Xtest, ytrain, ytest = train_test_split(
