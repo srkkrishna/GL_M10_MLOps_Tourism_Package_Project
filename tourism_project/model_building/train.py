@@ -27,7 +27,7 @@ print("Test set shape:", Xtest.shape)
 numeric_features = Xtrain.select_dtypes(include=["int64", "float64"]).columns.tolist()
 
 # Identify categorical features (columns with object/string data types)
-categorical_features = Xtrain.select_dtypes(include=["object"]).columns.tolist()
+categorical_features = Xtrain.select_dtypes(include=["object","category"]).columns.tolist()
 
 # Build preprocessing pipeline:
 # - Scale numeric features to standard normal distribution
