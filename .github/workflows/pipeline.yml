@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: pip install -r tourism_project/requirements.txt   # Install project dependencies
+        run: pip install -r tourism_project/requirements_train.txt   # Install project dependencies
       - name: Register dataset
         run: python tourism_project/model_building/data_register.py   # Run dataset registration script
       - name: Upload registered dataset
@@ -40,7 +40,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: pip install -r tourism_project/requirements.txt   # Install dependencies again
+        run: pip install -r tourism_project/requirements_train.txt   # Install dependencies again
       - name: Prepare data
         run: python tourism_project/model_building/prep.py     # Run preprocessing script
       - name: Upload train/test splits
@@ -64,7 +64,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: pip install -r tourism_project/requirements.txt   # Install dependencies
+        run: pip install -r tourism_project/requirements_train.txt   # Install dependencies
       - name: Download train/test splits
         uses: actions/download-artifact@v4   # Retrieve splits from Job 2
         with:
