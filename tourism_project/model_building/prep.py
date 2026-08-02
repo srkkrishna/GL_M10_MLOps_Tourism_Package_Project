@@ -27,3 +27,27 @@ ytest.to_csv("ytest.csv", index=False)
 
 print("✅ Data prepared: train/test splits written.")
 print("Target values kept as:", sorted(y.unique()))
+
+##local testing purpose
+#import os
+#from google.colab import drive
+
+# --- Local testing: save to Google Drive ---
+#drive.mount('/content/drive')  # mount Drive
+
+# Ensure target folder exists
+#os.makedirs("/content/drive/MyDrive/AIML/test", exist_ok=True)
+
+# Save splits locally as CSV files in your Drive folder
+#Xtrain.to_csv("/content/drive/MyDrive/AIML/test/Xtrain.csv", index=False)
+##Xtest.to_csv("/content/drive/MyDrive/AIML/test/Xtest.csv", index=False)
+#ytrain.to_csv("/content/drive/MyDrive/AIML/test/ytrain.csv", index=False)
+#ytest.to_csv("/content/drive/MyDrive/AIML/test/ytest.csv", index=False)
+
+#print("✅ Train/test splits also saved to /content/drive/MyDrive/AIML/test/")
+
+# Print first 10 rows of each file to verify
+#print("\nXtrain sample:\n", Xtrain.head(10))
+#print("\nXtest sample:\n", Xtest.head(10))
+#print("\nytrain sample:\n", ytrain[:10])
+#print("\nytest sample:\n", ytest[:10])
