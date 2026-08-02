@@ -1,6 +1,6 @@
-pandas==2.2.2
-scikit-learn==1.6.0
-xgboost==2.1.4
-joblib==1.5.1
-streamlit==1.43.2
-mlflow==2.14.1
+pandas==2.2.2          # Data manipulation and analysis (tabular data handling)
+scikit-learn==1.6.0    # Machine learning toolkit (preprocessing, pipelines, metrics, model selection)
+xgboost==2.1.4         # Gradient boosting algorithm for classification/regression
+joblib==1.5.1          # Efficient model persistence (saving/loading trained models)
+streamlit==1.43.2      # Web app framework for interactive ML model deployment
+mlflow==2.14.1         # Experiment tracking, metrics logging, and model management
