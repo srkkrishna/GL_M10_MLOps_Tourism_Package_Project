@@ -1,53 +1,66 @@
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
-# Load dataset from the project data folder
+# --- Load dataset ---
 df = pd.read_csv("tourism_project/data/tourism.csv")
+print("✅ Dataset loaded successfully.")
 print("Columns in dataset:", df.columns.tolist())
+print(f"Dataset shape: {df.shape}")
 
-# ✅ Remove unnecessary columns (adjust as needed)
-# Example: drop an ID column if present
+# --- Drop unnecessary columns ---
+if "Unnamed: 0" in df.columns or df.columns[0] == "":
+    df = df.iloc[:, 1:]
 if "CustomerID" in df.columns:
     df.drop(columns=["CustomerID"], inplace=True)
 
-# Define features (X) and target (y)
-X = df.drop(columns=["ProdTaken"])
-y = df["ProdTaken"]
+# --- Handle missing values ---
+print("\nHandling missing values...")
+numerical_cols = df.select_dtypes(include=[np.number]).columns
+categorical_cols = df.select_dtypes(include=["object"]).columns
 
-# Stratified split to preserve class balance
+for col in numerical_cols:
+    if df[col].isnull().sum() > 0:
+        df[col].fillna(df[col].median(), inplace=True)
+
+for col in categorical_cols:
+    if df[col].isnull().sum() > 0:
+        df[col].fillna(df[col].mode()[0], inplace=True)
+
+# --- Fix data quality issues ---
+if "Gender" in df.columns:
+    df["Gender"] = df["Gender"].str.strip().replace({"Fe Male": "Female", "Fe male": "Female"})
+
+# --- Encode categorical features ---
+print("\nEncoding categorical variables...")
+label_encoder = LabelEncoder()
+categorical_features = ["TypeofContact", "Occupation", "Gender", "ProductPitched",
+                        "MaritalStatus", "Designation"]
+
+for col in categorical_features:
+    if col in df.columns:
+        df[col] = label_encoder.fit_transform(df[col].astype(str))
+
+# --- Define target ---
+target_col = "ProdTaken"
+X = df.drop(columns=[target_col])
+y = df[target_col]
+
+print(f"\nFeatures shape: {X.shape}")
+print(f"Target shape: {y.shape}")
+print(f"Target distribution:\n{y.value_counts()}")
+
+# --- Train-test split ---
 Xtrain, Xtest, ytrain, ytest = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# Save splits locally as CSV files
+print(f"\nTrain set size: {Xtrain.shape[0]}")
+print(f"Test set size: {Xtest.shape[0]}")
+
+# --- Save splits ---
 Xtrain.to_csv("Xtrain.csv", index=False)
 Xtest.to_csv("Xtest.csv", index=False)
 ytrain.to_csv("ytrain.csv", index=False)
 ytest.to_csv("ytest.csv", index=False)
-
-print("✅ Data prepared: train/test splits written.")
-print("Target values kept as:", sorted(y.unique()))
-
-##local testing purpose
-#import os
-#from google.colab import drive
-
-# --- Local testing: save to Google Drive ---
-#drive.mount('/content/drive')  # mount Drive
-
-# Ensure target folder exists
-#os.makedirs("/content/drive/MyDrive/AIML/test", exist_ok=True)
-
-# Save splits locally as CSV files in your Drive folder
-#Xtrain.to_csv("/content/drive/MyDrive/AIML/test/Xtrain.csv", index=False)
-##Xtest.to_csv("/content/drive/MyDrive/AIML/test/Xtest.csv", index=False)
-#ytrain.to_csv("/content/drive/MyDrive/AIML/test/ytrain.csv", index=False)
-#ytest.to_csv("/content/drive/MyDrive/AIML/test/ytest.csv", index=False)
-
-#print("✅ Train/test splits also saved to /content/drive/MyDrive/AIML/test/")
-
-# Print first 10 rows of each file to verify
-#print("\nXtrain sample:\n", Xtrain.head(10))
-#print("\nXtest sample:\n", Xtest.head(10))
-#print("\nytrain sample:\n", ytrain[:10])
-#print("\nytest sample:\n", ytest[:10])
