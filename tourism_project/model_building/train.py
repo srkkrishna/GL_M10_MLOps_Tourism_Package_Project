@@ -3,6 +3,7 @@ import os
 import joblib
 import mlflow
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import make_column_transformer
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import GridSearchCV
@@ -21,9 +22,20 @@ ytest = pd.read_csv("ytest.csv").values.ravel()
 print("Training set shape:", Xtrain.shape)
 print("Test set shape:", Xtest.shape)
 
-# --- Preprocessor ---
-numeric_features = Xtrain.columns.tolist()
-preprocessor = make_column_transformer((StandardScaler(), numeric_features))
+
+# Identify numeric features (columns with int or float data types)
+numeric_features = Xtrain.select_dtypes(include=["int64", "float64"]).columns.tolist()
+
+# Identify categorical features (columns with object/string data types)
+categorical_features = Xtrain.select_dtypes(include=["object"]).columns.tolist()
+
+# Build preprocessing pipeline:
+# - Scale numeric features to standard normal distribution
+# - One-hot encode categorical features, ignoring unseen categories at inference
+preprocessor = make_column_transformer(
+    (StandardScaler(), numeric_features),  # Apply StandardScaler to numeric columns
+    (OneHotEncoder(handle_unknown="ignore"), categorical_features)  # Apply OneHotEncoder to categorical columns
+)
 
 # --- Base model ---
 xgb_model = xgb.XGBClassifier(
