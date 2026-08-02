@@ -2,4 +2,8 @@ pandas==2.2.2          # Data manipulation and analysis (tabular data handling)
 scikit-learn==1.6.0    # Machine learning toolkit (preprocessing, pipelines, metrics, model selection)
 xgboost==2.1.4         # Gradient boosting algorithm for classification/regression
 joblib==1.5.1          # Efficient model persistence (saving/loading trained models)
+streamlit==1.43.2      # Web app framework for interactive ML model deployment       
 mlflow==3.0.1          # Experiment tracking, metrics logging, and model management
+pyarrow==14.0.2      # ensure compatible build
+setuptools==70.0.0   # provide pkg_resources
+wheel==0.43.0        # help build wheels cleanly
