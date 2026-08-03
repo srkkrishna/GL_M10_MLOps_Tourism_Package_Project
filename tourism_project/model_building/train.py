@@ -4,13 +4,15 @@ import joblib
 import mlflow
 from sklearn.preprocessing import StandardScaler, OneHotEncoder   # Preprocessing tools
 from sklearn.compose import make_column_transformer               # Combine preprocessing steps
+from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import make_pipeline                        # Build ML pipeline
 from sklearn.model_selection import GridSearchCV                  # Hyperparameter tuning
 from sklearn.metrics import (                                      # Evaluation metrics
     accuracy_score, precision_score, recall_score,
     f1_score, roc_auc_score, classification_report, confusion_matrix
 )
-import xgboost as xgb                                              # Gradient boosting model
+import xgboost as xgb                                             # Gradient boosting model
+
 
 # --- Load train/test splits ---
 # Read the pre-saved train/test CSVs
@@ -30,9 +32,11 @@ categorical_features = Xtrain.select_dtypes(include=["object","category"]).colum
 
 # --- Build preprocessing pipeline ---
 # Scale numeric features and one-hot encode categorical features
-preprocessor = make_column_transformer(
-    (StandardScaler(), numeric_features),
-    (OneHotEncoder(handle_unknown="ignore"), categorical_features)
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("num", StandardScaler(), numeric_features),
+        ("cat", OneHotEncoder(handle_unknown="ignore"), categorical_features),
+    ]
 )
 
 # --- Base model ---
