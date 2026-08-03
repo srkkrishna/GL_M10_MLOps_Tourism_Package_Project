@@ -5,7 +5,7 @@ import joblib
 import sys
 
 # --- Base directory and dataset/model paths ---
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_DIR / "data" / "tourism.csv"
 MODEL_PATH = BASE_DIR / "deployment" / "best_tourism_model.joblib"
 print("DEBUG: BASE_DIR =", BASE_DIR, file=sys.stderr)  ## goes to Streamlit logs
