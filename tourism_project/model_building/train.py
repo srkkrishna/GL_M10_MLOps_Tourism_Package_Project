@@ -24,11 +24,14 @@ ytest = pd.read_csv("ytest.csv").values.ravel()
 print("Training set shape:", Xtrain.shape)
 print("Test set shape:", Xtest.shape)
 
-# --- Identify feature types ---
-# Numeric features: int/float columns
-numeric_features = Xtrain.select_dtypes(include=["int64", "float64"]).columns.tolist()
-# Categorical features: object/category columns
-categorical_features = Xtrain.select_dtypes(include=["object","category"]).columns.tolist()
+# Explicitly list categorical columns
+categorical_features = [
+    "TypeofContact", "Occupation", "Gender",
+    "MaritalStatus", "Designation", "ProductPitched"
+]
+# All other columns are numeric
+numeric_features = [col for col in Xtrain.columns if col not in categorical_features]
+
 
 # --- Build preprocessing pipeline ---
 # Scale numeric features and one-hot encode categorical features
