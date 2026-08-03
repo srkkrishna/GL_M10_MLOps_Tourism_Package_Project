@@ -30,8 +30,12 @@ categorical_features = [
     "MaritalStatus", "Designation", "ProductPitched"
 ]
 # All other columns are numeric
-numeric_features = [col for col in Xtrain.columns if col not in categorical_features]
-
+numeric_features = [
+    "Age", "CityTier", "DurationOfPitch", "NumberOfPersonVisiting",
+    "NumberOfFollowups", "PreferredPropertyStar", "NumberOfTrips",
+    "Passport", "PitchSatisfactionScore", "OwnCar",
+    "NumberOfChildrenVisiting", "MonthlyIncome"
+]
 
 # --- Build preprocessing pipeline ---
 # Scale numeric features and one-hot encode categorical features
@@ -41,7 +45,6 @@ preprocessor = ColumnTransformer(
         ("cat", OneHotEncoder(handle_unknown="ignore"), categorical_features),
     ]
 )
-
 # --- Base model ---
 # XGBoost classifier with reproducibility and parallelism enabled
 xgb_model = xgb.XGBClassifier(
