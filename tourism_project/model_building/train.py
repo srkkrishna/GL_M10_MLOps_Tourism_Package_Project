@@ -113,8 +113,8 @@ with mlflow.start_run():
     # --- Save best model ---
     os.makedirs("tourism_project/deployment", exist_ok=True)
     model_path = "tourism_project/deployment/best_tourism_model.joblib"
-    joblib.dump(best_model, model_path)
-    #joblib.dump(grid_search.best_estimator_, model_path)
+    #joblib.dump(best_model, model_path)
+    joblib.dump(grid_search.best_estimator_, model_path)
     print(f"\n✅ Best model saved at: {model_path}")
 
     # --- Log artifact to MLflow ---
