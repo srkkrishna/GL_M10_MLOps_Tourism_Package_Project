@@ -108,34 +108,46 @@ def main():
     values = build_input_form(df)
     input_df = prepare_input_frame(values, df)
 
-    # Layout: left column shows entered details, right column shows prediction
-    col1, col2 = st.columns([1.4, 0.8])
-    with col1:
-        st.subheader("Entered details")
-        st.dataframe(input_df, use_container_width=True)
+    # --- Show entered details table across full width ---
+    st.subheader("Entered details")
+    st.dataframe(input_df, use_container_width=True)
 
-    with col2:
-        st.subheader("Prediction")
+    # --- Prediction displayed directly below details ---
+    if MODEL_PATH.exists():
+        try:
+            model = joblib.load(MODEL_PATH)     # Load full pipeline (preprocessor + classifier)
+            prediction = int(model.predict(input_df)[0])          # Predict purchase outcome
+            probability = float(model.predict_proba(input_df)[0][1])  # Probability of purchase
 
-        if MODEL_PATH.exists():
-            try:
-                model = joblib.load(MODEL_PATH)     # Load full pipeline (preprocessor + classifier)
-                #st.write(f"DEBUG: Loaded model type: {type(model)}")  # Sanity check
-                prediction = int(model.predict(input_df)[0])          # Predict purchase outcome
-                probability = float(model.predict_proba(input_df)[0][1])  # Probability of purchase
-                st.metric("Prediction", "Purchased" if prediction == 1 else "Not Purchased")
-                st.metric("Probability of Purchase", f"{probability:.2%}")
-            except Exception as exc:
-                st.error(f"Prediction failed: {exc}")
+            # Color-coded prediction text
+            if prediction == 1:
+                st.markdown(
+                    f"<h3 style='color:green;'>✅ Prediction: Purchased</h3>",
+                    unsafe_allow_html=True
+                )
+            else:
+                st.markdown(
+                    f"<h3 style='color:red;'>❌ Prediction: Not Purchased</h3>",
+                    unsafe_allow_html=True
+                )
+
+            # Probability metric
+            st.metric("Probability of Purchase", f"{probability:.2%}")
+
+        except Exception as exc:
+            st.error(f"Prediction failed: {exc}")
+    else:
+        # Fallback: use dataset average if model file missing
+        baseline_prob = float(df["ProdTaken"].mean())
+        fallback_prediction = int(baseline_prob >= 0.5)
+        st.info("No trained model file was found, so a simple fallback prediction is being used based on the dataset average.")
+        if fallback_prediction == 1:
+            st.markdown("<h3 style='color:green;'>✅ Prediction: Purchased</h3>", unsafe_allow_html=True)
         else:
-            # Fallback: use dataset average if model file missing
-            baseline_prob = float(df["ProdTaken"].mean())
-            fallback_prediction = int(baseline_prob >= 0.5)
-            st.info("No trained model file was found, so a simple fallback prediction is being used based on the dataset average.")
-            st.metric("Prediction", "Purchased" if fallback_prediction == 1 else "Not Purchased")
-            st.metric("Probability of Purchase", f"{baseline_prob:.2%}")
+            st.markdown("<h3 style='color:red;'>❌ Prediction: Not Purchased</h3>", unsafe_allow_html=True)
+        st.metric("Probability of Purchase", f"{baseline_prob:.2%}")
 
-    # Show dataset preview
+    # --- Show dataset preview below everything ---
     st.subheader("Dataset preview")
     st.dataframe(df.head(10), use_container_width=True)
 
