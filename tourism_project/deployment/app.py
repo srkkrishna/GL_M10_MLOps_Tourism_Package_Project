@@ -2,6 +2,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 import joblib
+import sys
 
 # --- Base directory and dataset/model paths ---
 BASE_DIR = Path(__file__).resolve().parent
