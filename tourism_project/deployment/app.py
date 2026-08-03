@@ -9,6 +9,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent   # Go one level up from 'depl
 DATA_PATH = BASE_DIR / "data" / "tourism.csv"       # Dataset lives in 'tourism_project/data'
 MODEL_PATH = BASE_DIR / "deployment" / "best_tourism_model.joblib"  # Trained pipeline saved here
 
+# To inspect the model 
+def inspect_model():
+    if MODEL_PATH.exists():
+        model = joblib.load(MODEL_PATH)
+        # Print to Streamlit logs
+        print("DEBUG: Loaded model structure =", model, file=sys.stderr)
+        # Show in app UI
+        st.write("DEBUG: Loaded model structure:", model)
+    else:
+        st.error(f"Model file not found at {MODEL_PATH}")
+
+
 # --- Load dataset once and cache ---
 @st.cache_data(show_spinner=False)                  # Cache dataset to avoid reloading every run
 def load_dataset(path: Path) -> pd.DataFrame:
@@ -95,6 +107,9 @@ def main():
     st.set_page_config(page_title="Tourism Purchase Predictor", page_icon="✈️", layout="wide")
     st.title("Tourism Package Prediction App")
     st.write("This app reads the tourism dataset from the Data folder and lets you enter customer details for a purchase prediction.")
+
+     # Run inspection once at startup
+    inspect_model()
 
     # Check dataset exists before proceeding
     if not DATA_PATH.exists():
