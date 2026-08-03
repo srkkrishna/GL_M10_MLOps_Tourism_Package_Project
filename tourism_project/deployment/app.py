@@ -9,17 +9,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent   # Go one level up from 'depl
 DATA_PATH = BASE_DIR / "data" / "tourism.csv"       # Dataset lives in 'tourism_project/data'
 MODEL_PATH = BASE_DIR / "deployment" / "best_tourism_model.joblib"  # Trained pipeline saved here
 
-# To inspect the model 
-def inspect_model():
+def show_feature_names():
     if MODEL_PATH.exists():
         model = joblib.load(MODEL_PATH)
-        # Print to Streamlit logs
-        print("DEBUG: Loaded model structure =", model, file=sys.stderr)
-        # Show in app UI
-        st.write("DEBUG: Loaded model structure:", model)
+        # Access the ColumnTransformer inside the pipeline
+        ct = model.named_steps["columntransformer"]
+        # Get feature names from the transformers
+        feature_names = []
+        for name, transformer, cols in ct.transformers_:
+            if hasattr(transformer, "get_feature_names_out"):
+                # For OneHotEncoder, include original column + category
+                fn = transformer.get_feature_names_out(cols)
+                feature_names.extend(fn)
+            else:
+                # For StandardScaler, just use the column names
+                feature_names.extend(cols)
+        st.write("Transformed feature names:", feature_names)
     else:
-        st.error(f"Model file not found at {MODEL_PATH}")
-
+        st.error("Model file not found")
 
 # --- Load dataset once and cache ---
 @st.cache_data(show_spinner=False)                  # Cache dataset to avoid reloading every run
@@ -108,8 +115,8 @@ def main():
     st.title("Tourism Package Prediction App")
     st.write("This app reads the tourism dataset from the Data folder and lets you enter customer details for a purchase prediction.")
 
-     # Run inspection once at startup
-    inspect_model()
+    # Call this once in your app
+    show_feature_names()
 
     # Check dataset exists before proceeding
     if not DATA_PATH.exists():
